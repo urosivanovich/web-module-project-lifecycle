@@ -27,7 +27,11 @@ class App extends React.Component {
         <input />
         <button>Search</button>
         <br></br>
-        <User user={this.user}/>
+        <img width="75" src={this.state.user.avatar_url} />
+            <p>{this.state.user.name}</p>
+            <p>Total Repos: {this.state.user.public_repos}</p>
+            <p>Total Followers: {this.state.user.followers}</p>
+            <h4>Followers</h4>
       </form>
     </div>);
   }
