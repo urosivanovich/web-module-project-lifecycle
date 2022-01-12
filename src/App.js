@@ -1,38 +1,69 @@
 import axios from 'axios';
 import React from 'react';
-import User from './components/User';
+import User from './components/User'
+import FollowerList from './components/FollowerList';
 
 class App extends React.Component {
 
   state = {
-    user: [],
+    currentUser: 'urosivanovich',
+    user: {},
+    followers: []
   }
 
-  componentDidMount(){
-    axios.get("https://api.github.com/users/urosivanovich").then(resp=>{
-      console.log(resp);
+  componentDidMount() {
+    axios.get(`https://api.github.com/users/${this.state.currentUser}`)
+    .then(resp=>{
       this.setState({
-        ...this.state, 
+        ...this.state,
         user: resp.data
-      })
+      });
     })
-    .catch(err => console.log(err))
   }
+
+  componentDidUpdate(prevProps, prevState){
+    if(this.state.user !== prevState.user) {
+      axios.get(`https://api.github.com/users/${this.state.currentUser}/followers`)
+      .then(resp=>{
+        this.setState({
+          ...this.state,
+          followers: resp.data
+        })
+      })
+    }
+  }
+
+  handleChange = (e) => {
+    this.setState({
+      ...this.state,
+      currentUser: e.target.value
+    })
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    axios.get(`https://api.github.com/users/${this.state.currentUser}`)
+    .then(resp=>{
+      this.setState({
+        ...this.state,
+        user: resp.data
+      });
+    });
+  }
+
 
 
   render() {
     return(<div>
-      <h1>GITHUB INFO</h1>
-      <form>
-        <input />
+      <h1>Github Info</h1>
+      <form onSubmit={this.handleSubmit}>
+        <input placeholder='Github Handler' onChange={this.handleChange} />
         <button>Search</button>
-        <br></br>
-        <img width="75" src={this.state.user.avatar_url} />
-            <p>{this.state.user.name}</p>
-            <p>Total Repos: {this.state.user.public_repos}</p>
-            <p>Total Followers: {this.state.user.followers}</p>
-            <h4>Followers</h4>
       </form>
+
+      <User user={this.state.user} />
+      <FollowerList followers={this.state.followers} />
+
     </div>);
   }
 }
