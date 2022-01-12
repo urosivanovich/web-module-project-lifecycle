@@ -8,7 +8,8 @@ class App extends React.Component {
   state = {
     currentUser: 'urosivanovich',
     user: {},
-    followers: []
+    followers: [],
+    count: 0
   }
 
   componentDidMount() {
@@ -22,6 +23,8 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState){
+    console.log('this is prevProps', prevProps)
+    console.log('this is prevState', prevState)
     if(this.state.user !== prevState.user) {
       axios.get(`https://api.github.com/users/${this.state.currentUser}/followers`)
       .then(resp=>{
@@ -60,6 +63,10 @@ class App extends React.Component {
         <input placeholder='Github Handler' onChange={this.handleChange} />
         <button>Search</button>
       </form>
+      <button onClick={()=>this.setState({
+        ...this.state,
+        count: this.state.count + 1
+      })}>{this.state.count}</button>
 
       <User user={this.state.user} />
       <FollowerList followers={this.state.followers} />
